@@ -1,5 +1,4 @@
 deps/*
-library/*
 gen/*.g4
 gen/*.interp
 gen/*.tokens
