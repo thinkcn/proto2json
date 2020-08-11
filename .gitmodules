@@ -1,3 +1,4 @@
 [submodule "library/jsoncpp"]
 	path = library/jsoncpp
-	url = https://github.com/open-source-parsers/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
+    branch = 1.9.3
