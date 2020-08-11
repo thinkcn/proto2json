@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
+#include <string.h>
 
 class Helper {
 public:
