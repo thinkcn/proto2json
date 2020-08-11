@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+import "common/Reply.proto";
+import "common/Tid.proto";
+import "common/Pager.proto";
+import "common/HiTime.proto";
+
+package app.Gen.EduTeach;
+
+/**
+ * @tag 用户信息
+ * @controller user_info
+ */
+service UserInfoService {
+    /**
+     * @title 获取用户信息
+     */
+    rpc get(Tid) returns (User) {}
+    
+}
+
+message Tid {
+    int32 id = 1; // 用户id
+}
+
+message User {
+    int32 id = 1; // 用户id
+    string name = 2; // 用户姓名
+    string nick = 3; // 用户昵称
+    repeated User friends = 4; // 用户的好友
+    Hobby hobby = 5;  // 用户的爱好
+    repeated Addr addrs = 6; // 用户收货地址
+}
+
+message Hobby {
+    int32 id = 1;
+    string title = 2; //爱好标题
+}
+
+message Addr {
+    int32 id = 1;
+    int32 protinceId = 2; // 省
+    int32 cityId = 3; // 市
+    int32 districtId = 4;  // 区县
+}
