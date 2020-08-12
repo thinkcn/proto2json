@@ -16,5 +16,8 @@ make install
 ## Usage
 
 ```bash
+# generate swagger api
 protojson -p ./json -e api ../tests/UserInfo.proto
+# generate json
+protojson -p ./json -e json ../tests/UserInfo.proto
 ```
