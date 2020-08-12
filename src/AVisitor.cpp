@@ -339,7 +339,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
     std::vector<Protobuf3Parser::RpcContext *> rpcArr = context->rpc();
     std::string serviceTag = serviceName;
 
-    Json::Value api = Json::Value(Json::ValueType::stringValue);
+    Json::Value api = Json::Value();
     api["proto2json"] = PROTOJSON_VERSION;
 
     service["name"] = serviceName.data();
