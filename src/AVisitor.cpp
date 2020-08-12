@@ -572,12 +572,14 @@ Json::Value AVisitor::parseResBody(std::string responseName)
             
             Json::Value fieldBean = Json::Value();
             fieldBean["type"] = isRepeated ? "array" : "object";
-            fieldBean["description"] = pCommentObj.get("desc", "").asString();
+            fieldBean["description"] = pCommentObj.get("desc", format).asString();
         
             // -
             Json::Value objTmp = parseParamBody(format);
             
             if (isRepeated) {
+                fieldBean["items"]["title"] = format;
+                fieldBean["items"]["$$ref"] = "#/definitions/"+format; 
                 fieldBean["items"]["type"] = "object";// type;
                 fieldBean["items"]["properties"] = objTmp["properties"];
             } else {
