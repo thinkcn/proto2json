@@ -364,9 +364,9 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
     // 接口解析
     if (!strcmp(engine.data(), "api") && messageGot) {
         Json::Value obj = parseComment(serviceComment);
-        std::string title = obj.get("title", serviceName.data()).asString();
         std::string version = obj.get("version", "last").asString();
         std::string tag = obj.get("tag", serviceName).asString();
+        std::string title = obj.get("title", tag).asString();
         if (!tag.empty()) {
             serviceTag = tag;
         }
@@ -374,6 +374,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
         Json::Value apiInfo;
         apiInfo["title"] = title;
         apiInfo["version"] = version;
+        apiInfo["mark"] = serviceCom.get("mark", serviceName).asString();
         api["info"] = apiInfo;
 
         std::string schemes = obj.get("schemes", "https").asString();
