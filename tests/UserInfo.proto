@@ -1,10 +1,5 @@
 syntax = "proto3";
 
-import "common/Reply.proto";
-import "common/Tid.proto";
-import "common/Pager.proto";
-import "common/HiTime.proto";
-
 package app.Gen.EduTeach;
 
 /**
