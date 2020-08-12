@@ -55,7 +55,7 @@ int main(int argc, const char* argv[]) {
 
     bool isDebug = false;
     std::string engine = "json";
-    std::string out_path = "./";
+    std::string outPuth = "./";
     std::string protoFile = argv[argc-1];
 
     for (int i = 1; i < argc; i++) {
@@ -71,7 +71,7 @@ int main(int argc, const char* argv[]) {
             // cmd = "copyright";
             // TODO
         } else if (!strcmp(argv[i], "-p") && !lastarg) {
-            out_path = argv[i+1];
+            outPuth = argv[i+1];
             i++;
         } else if (!strcmp(argv[i], "-e") && !lastarg) {
             engine = argv[i+1];
@@ -79,6 +79,13 @@ int main(int argc, const char* argv[]) {
         } else if (!strcmp(argv[i], "-d")) {
             isDebug = true;
         }
+    }
+
+    if (access(outPuth.data(), F_OK) == -1 || !Helper::isDirectory(outPuth.data())) {
+        printf("\n");
+        printf("Output json path is not exists\n");
+        printf("\n");
+        exit(1);
     }
 
     if(access(protoFile.data(), F_OK) != -1 && !Helper::isDirectory(protoFile.data())) {
@@ -96,9 +103,7 @@ int main(int argc, const char* argv[]) {
     std::vector<std::string> tmp = Helper::split(protoName, ".");
     protoName = tmp[0];
 
-    // ./protojson -e api -p ./json 
-
-    const char* name = protoFile.data();// "TeacherProfile.proto";
+    const char* name = protoFile.data();
     std::ifstream stream;
     stream.open(name);
     ANTLRInputStream input(stream);
@@ -139,7 +144,6 @@ int main(int argc, const char* argv[]) {
         }  
     }
 
-    // TODO: 检查 out_path 是否存在，是否文件夹 
     // TODO: 解析枚举 为整数
     // TODO: 注释掉service部分rpc之后报错
 
@@ -148,7 +152,7 @@ int main(int argc, const char* argv[]) {
     visitor.setProtoPath(protoPath);
     visitor.setComments(comments);
     visitor.setDebug(isDebug);
-    visitor.setOutPath(out_path);
+    visitor.setOutPath(outPuth);
     visitor.setEngine(engine);
     visitor.setProtoName(protoName);
 
