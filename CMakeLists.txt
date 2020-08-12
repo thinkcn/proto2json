@@ -149,7 +149,7 @@ endif()
 if(APPLE)
   target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
 elseif(UNIX)
-  target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.so")
+  target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
 endif()  
 
 target_link_libraries(protojson ${SYSTEM_LIBS})
