@@ -448,7 +448,6 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
             content["tags"].append(tag);
 
             std::string apiPath = controller + "/" + word;
-            //printf("path:%s\n", apiPath.data());
 
             Json::Value pathBean;
             pathBean[apiPath][method] = content;
@@ -475,13 +474,11 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
             response["description"] = "successful operation";
             response["schema"]["type"] = "object";
             response["schema"]["properties"] = resBody;
-            response["schema"]["title"] = responseName+"😂";
+            response["schema"]["title"] = responseName;
             response["schema"]["$$ref"] = "#/definitions/"+responseName;
             content["responses"]["200"] = response;
 
             api["paths"][apiPath][method] = content;
-
-            //TODO : 响应
         } 
 
         service["rpcs"].append(item);
@@ -587,23 +584,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
                 fieldBean["properties"] = objTmp["properties"];
             }
 
-            // 解析数组
-            // bool isRepeated = paramBean.get("isRepeated", false).asBool();
-            // if (isRepeated) {
-
-            //     Json::Value arr = Json::Value(objTmp);
-            //     arr["type"] = "array";
-            //     arr["items"]["type"] = "object";
-            //     arr["items"]["properties"] = objTmp["properties"];
-            //     arr["description"] = objTmp["title"];
-            //     arr.removeMember("properties");
-            //     fieldBean["properties"][pName] = arr;
-            // } else {
-                
-            // }
-            // -
-
-            body[pName] = fieldBean; //TODO
+            body[pName] = fieldBean;
             
         } 
         else {
@@ -711,15 +692,6 @@ Json::Value AVisitor::parseParamBody(std::string parName)
             continue;
         }
 
-        // cout<<val_array[nIndex]<<endl;
-        
-        // Json::Value pTmp;
-        // pTmp["name"] = pName;
-        // pTmp["in"] = "header";
-        // pTmp["description"] = pCommentObj.get("desc", "").asString();
-        // pTmp["required"] = true;
-        // pTmp["type"] = paramBean.get("type", "").asString();
-
         Json::Value fieldBean = Json::Value();
         fieldBean["type"] = fieldType;
         fieldBean["format"] = paramBean.get("type", "string").asString();
@@ -782,8 +754,7 @@ Json::Value AVisitor::parseComment(std::string comment)
 
     // 
     std::stringstream ss;
-    ss << cmens.size(); 
-    //bean["cccc"] = ss.str();
+    ss << cmens.size();
 
     for (int m = 0; m < cmens.size(); ++m)
     {
