@@ -42,7 +42,9 @@ if( WIN32)
   SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  gdi32 )
 endif()
 
-link_libraries(${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libjsoncpp_static.a)
+link_libraries(
+  libjsoncpp_static.a
+  )
 include_directories(${PROJECT_SOURCE_DIR}/deps/use/local/include)
 
 if(LAPACK_FOUND)
