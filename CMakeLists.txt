@@ -79,7 +79,7 @@ if (MSVC)
 endif()
 
 
-set(protojson-GENERATED_SRC
+set(proto2json-GENERATED_SRC
   ${PROJECT_SOURCE_DIR}/gen/Protobuf3BaseListener.cpp 
   ${PROJECT_SOURCE_DIR}/gen/Protobuf3BaseVisitor.cpp 
   ${PROJECT_SOURCE_DIR}/gen/Protobuf3Lexer.cpp 
@@ -88,16 +88,20 @@ set(protojson-GENERATED_SRC
   ${PROJECT_SOURCE_DIR}/gen/Protobuf3Visitor.cpp  
  )
 
-foreach( src_file ${protojson-GENERATED_SRC} )
+foreach( src_file ${proto2json-GENERATED_SRC} )
       set_source_files_properties(
           ${src_file}
           PROPERTIES
           GENERATED TRUE
           )
-endforeach( src_file ${protojson-GENERATED_SRC} )
+endforeach( src_file ${proto2json-GENERATED_SRC} )
 
 MESSAGE(STATUS "HOME dir: ${ANTLR_CPP_RUNTIME_DST}/usr/local/")
 
+link_directories (
+  ${PROJECT_SOURCE_DIR}/deps/usr/local/lib/
+  ${PROJECT_SOURCE_DIR}/deps/usr/local/lib64/
+  )
 include_directories(
   ${PROJECT_SOURCE_DIR}/deps/usr/local/include/antlr4-runtime/
   ${PROJECT_SOURCE_DIR}/deps/usr/local/include/misc
@@ -111,12 +115,12 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/
   )
 
-set(protojson-SRC
+set(proto2json-SRC
   ${PROJECT_SOURCE_DIR}/src/main.cpp
   ${PROJECT_SOURCE_DIR}/src/AVisitor.cpp 
   ${PROJECT_SOURCE_DIR}/src/Comment.cpp
   ${PROJECT_SOURCE_DIR}/src/Helper.cpp
-  ${protojson-GENERATED_SRC}
+  ${proto2json-GENERATED_SRC}
   )
 
 if (NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
@@ -125,70 +129,70 @@ else()
   set (flags_1 "-MP /wd4251")
 endif()
 
-foreach( src_file ${protojson-SRC} )
+foreach( src_file ${proto2json-SRC} )
       set_source_files_properties(
           ${src_file}
           PROPERTIES
           COMPILE_FLAGS "${COMPILE_FLAGS} ${flags_1}"
           )
-endforeach( src_file ${protojson-SRC} )
+endforeach( src_file ${proto2json-SRC} )
 
-add_executable(protojson
-  ${protojson-SRC}
+add_executable(proto2json
+  ${proto2json-SRC}
 )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")  
   # see https://github.com/antlr/antlr4/issues/1874
-  target_compile_options(protojson PUBLIC "$<$<CONFIG:DEBUG>:/MT>")
+  target_compile_options(proto2json PUBLIC "$<$<CONFIG:DEBUG>:/MT>")
 endif()
 
 if(WIN32)
-  target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/antlr4-runtime.lib")
+  target_link_libraries(proto2json "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/antlr4-runtime.lib")
 endif()
 
 if(APPLE)
-  target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
+  target_link_libraries(proto2json "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
 elseif(UNIX)
-  target_link_libraries(protojson "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
+  target_link_libraries(proto2json "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a")
 endif()  
 
-target_link_libraries(protojson ${SYSTEM_LIBS})
+target_link_libraries(proto2json ${SYSTEM_LIBS})
 
 include(GNUInstallDirs)
 install(FILES 
     README.md
     LICENSE 
-    DESTINATION "share/doc/protojson")
+    DESTINATION "share/doc/proto2json")
 install(PROGRAMS 
-    build/protojson
+    build/proto2json
     DESTINATION bin)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-add_custom_command(TARGET protojson POST_BUILD
+add_custom_command(TARGET proto2json POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.so"
-  $<TARGET_FILE_DIR:protojson>)
+  $<TARGET_FILE_DIR:proto2json>)
 endif()
 
 if(WIN32)
-add_custom_command(TARGET protojson POST_BUILD
+add_custom_command(TARGET proto2json POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/antlr4-runtime.dll"
-  $<TARGET_FILE_DIR:protojson>)
+  $<TARGET_FILE_DIR:proto2json>)
 endif()
 
 if(APPLE)
-add_custom_command(TARGET protojson POST_BUILD
+add_custom_command(TARGET proto2json POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${PROJECT_SOURCE_DIR}/deps/usr/local/lib/libantlr4-runtime.a"
-  $<TARGET_FILE_DIR:protojson>)
+  $<TARGET_FILE_DIR:proto2json>)
 endif()
 
 # copy the input file next to the generated executable
-#add_custom_command(TARGET protojson POST_BUILD
+#add_custom_command(TARGET proto2json POST_BUILD
 #  COMMAND ${CMAKE_COMMAND} -E copy_if_different
 #  "${PROJECT_SOURCE_DIR}/tests/test.php"
-#  $<TARGET_FILE_DIR:protojson>)
+#  $<TARGET_FILE_DIR:proto2json>)
 
 # necessary because the default working directory of Visual Studio
 # is not the same as the one in which the binary is created
@@ -196,8 +200,8 @@ endif()
 # one for when you launch the executale in Visual Studio (CTRL+F5)
 # one for when you launch it normally
 if (WIN32)
-add_custom_command(TARGET protojson POST_BUILD
+add_custom_command(TARGET proto2json POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${PROJECT_SOURCE_DIR}/tests/test.php"
-  $<TARGET_FILE_DIR:protojson>/../)
+  $<TARGET_FILE_DIR:proto2json>/../)
 endif()
