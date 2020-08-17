@@ -7,7 +7,9 @@ jsoncpp=`pwd`/library/jsoncpp
 cd deps
 curl -O https://www.antlr.org/download/antlr-4.7.1-complete.jar
 cd ..
-svn co https://github.com/antlr/antlr4/trunk/runtime/Cpp library/antlrruntime
+# svn co https://github.com/antlr/antlr4/trunk/runtime/Cpp library/antlrruntime
+svn co https://github.com/antlr/antlr4/tags/4.7.1/runtime/Cpp library/antlrruntime
+# svn co https://github.com/antlr/antlr4/tags/4.6/runtime/Cpp library/antlrruntime
 cd library/antlrruntime
 mkdir build
 cd build
