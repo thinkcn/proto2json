@@ -689,6 +689,7 @@ Json::Value AVisitor::parseParamBody(std::string parName)
                 arr.removeMember("properties");
                 body["properties"][pName] = arr;
             } else {
+                objTmp["description"] = pCommentObj.get("desc", "").asString();
                 body["properties"][pName] = objTmp;
             }
 
