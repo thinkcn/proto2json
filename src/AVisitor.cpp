@@ -4,6 +4,8 @@
  */
 #include <stdio.h>
 #include <sys/stat.h>
+#include <libgen.h>
+#include <dirent.h>
 #include "antlr4-runtime.h"
 #include "AVisitor.h"
 #include "json/json.h"
@@ -131,6 +133,11 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
 
 void AVisitor::parseImportPath(std::string importPath)
 {
+    if (!Helper::isExistFile(importPath.data())) {
+        printf("import:%s is not exists!\n", importPath.data());
+        exit(1);
+    }
+
     std::ifstream stream;
     stream.open(importPath);
     antlr4::ANTLRInputStream input2(stream);
@@ -166,11 +173,13 @@ void AVisitor::parseImportPath(std::string importPath)
         }  
     }
 
+    //std::string protoPath = std::string(dirname(strdup(importPath.data())));
+
     AVisitor visitor;
     visitor.setMessageGot(false);
-    visitor.setProtoPath(importPath);
+    visitor.setProtoPath(protoPath);
     visitor.setComments(comments);
-    visitor.setDebug(false);
+    visitor.setDebug(isDebug);
     visitor.setOutPath(outPath);
     visitor.setEngine(engine);
 
