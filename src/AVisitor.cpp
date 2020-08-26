@@ -121,7 +121,7 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
     //TODO : 了解 proto 的 import 是否可以使用绝对路径
 
     std::string importPath = protoPath + "/" + import.data();
-    isDebug && printf("import : %s\n", importPath.data());
+    isDebug && printf("import : %s (name=%s)\n", importPath.data(), import.data());
 
     // 解析
     parseImportPath(importPath);
@@ -145,7 +145,7 @@ void AVisitor::parseImportPath(std::string importPath)
     antlr4::CommonTokenStream tokens(&lexer2);
     Protobuf3Parser parser2(&tokens);
     parser2.removeErrorListeners();
-    lexer2.removeErrorListeners(); 
+    lexer2.removeErrorListeners();
 
     Protobuf3Parser::ProtoContext* tree = parser2.proto();
 
@@ -173,11 +173,13 @@ void AVisitor::parseImportPath(std::string importPath)
         }  
     }
 
+    std::string protoName = std::string(basename(strdup(importPath.data())));
     //std::string protoPath = std::string(dirname(strdup(importPath.data())));
 
     AVisitor visitor;
     visitor.setMessageGot(false);
     visitor.setProtoPath(protoPath);
+    visitor.setProtoName(protoName);
     visitor.setComments(comments);
     visitor.setDebug(isDebug);
     visitor.setOutPath(outPath);
@@ -185,10 +187,13 @@ void AVisitor::parseImportPath(std::string importPath)
 
     // 解析message
     visitor.visitProto(tree);
-    visitor.setMessageGot(true);
 
     // importMsgs = visitor.msgs;
     importMsgs.insert(std::end(importMsgs), std::begin(visitor.msgs), std::end(visitor.msgs));
+
+    if (visitor.importMsgs.size() > 0) {
+        importMsgs.insert(std::end(importMsgs), std::begin(visitor.importMsgs), std::end(visitor.importMsgs));
+    }
 }
 
 
@@ -629,9 +634,7 @@ Json::Value AVisitor::parseParamBody(std::string parName)
     std::string paramJson = buffer.str();
 
     if (paramJson.length() == 0) {
-        for (int i = 0; i < importMsgs.size(); ++i)
-        {
-            // printf("--- %s\n", importMsgs[i]["name"].asString().data());
+        for (int i = 0; i < importMsgs.size(); ++i) {
             if (!strcmp(parName.data(), importMsgs[i]["name"].asString().data())) {
                 paramObj = importMsgs[i];
                 break;
@@ -722,8 +725,7 @@ std::string AVisitor::formatComment(std::string tmp)
 {
     std::vector<std::string> lines = Helper::split(tmp, "\n");
     std::vector<std::string> arr;
-    for (int n = 0; n < lines.size(); ++n)
-    {
+    for (int n = 0; n < lines.size(); ++n) {
         std::string _line = lines[n];
         ltrim(_line);
         eraseLeftStr(_line, "*");
