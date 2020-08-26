@@ -134,8 +134,8 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
 void AVisitor::parseImportPath(std::string importPath)
 {
     if (!Helper::isExistFile(importPath.data())) {
-        printf("import:%s is not exists!\n", importPath.data());
-        exit(1);
+        //printf("import:%s is not exists!\n", importPath.data());
+        //exit(1);
     }
 
     std::ifstream stream;
