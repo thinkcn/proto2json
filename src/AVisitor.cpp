@@ -104,6 +104,10 @@ void AVisitor::setProtoName(std::string _protoName)
 {
     protoName = _protoName;
 }
+void AVisitor::setProtoBasePath(std::string _protoBasePath)
+{
+    protoBasePath = _protoBasePath;
+}
 
 antlrcpp::Any AVisitor::visitRpc(Protobuf3Parser::RpcContext *context)
 {
@@ -120,20 +124,32 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
     eraseRightStr(import, "\"");
     //TODO : 了解 proto 的 import 是否可以使用绝对路径
 
-    std::string importPath = protoPath + "/" + import.data();
+    std::string importPath = protoBasePath + "/" + import.data();
     isDebug && printf("import : %s (name=%s)\n", importPath.data(), import.data());
 
-    // 解析
-    parseImportPath(importPath);
+    if (import.rfind("google/protobuf", 0) == 0) {
+        // google protobuf value
+    } else {
+        // 解析相对路径
+        std::string pathPre = std::string(dirname(strdup(import.data())));
+        if (!Helper::isExistFile(importPath.data()) && !pathPre.empty()) {
+            std::string protoName = std::string(basename(strdup(import.data())));
+            std::string pathCopy = protoBasePath;
+            eraseRightStr(pathCopy, pathPre);
 
-    //TODO : 导入文件解析
-    // exit(0);
+            importPath = pathCopy + import.data();
+        }
+
+        // 解析
+        parseImportPath(importPath);
+    }
+
     return visitChildren(context);
 }
 
 void AVisitor::parseImportPath(std::string importPath)
 {
-    if (!Helper::isExistFile(importPath.data())) {
+    if (!Helper::isExistFile(importPath.data())) { 
         //printf("import:%s is not exists!\n", importPath.data());
         //exit(1);
     }
@@ -184,6 +200,7 @@ void AVisitor::parseImportPath(std::string importPath)
     visitor.setDebug(isDebug);
     visitor.setOutPath(outPath);
     visitor.setEngine(engine);
+    visitor.setProtoBasePath(protoBasePath);
 
     // 解析message
     visitor.visitProto(tree);
@@ -534,8 +551,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
     std::string paramJson = buffer.str();
 
     if (paramJson.length() == 0) {
-        for (int i = 0; i < importMsgs.size(); ++i)
-        {
+        for (int i = 0; i < importMsgs.size(); ++i) {
             // printf("--- %s\n", importMsgs[i]["name"].asString().data());
             if (!strcmp(responseName.data(), importMsgs[i]["name"].asString().data())) {
                 paramObj = importMsgs[i];

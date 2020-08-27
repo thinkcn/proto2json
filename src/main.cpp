@@ -155,6 +155,7 @@ int main(int argc, const char* argv[]) {
     visitor.setOutPath(outPuth);
     visitor.setEngine(engine);
     visitor.setProtoName(protoName);
+    visitor.setProtoBasePath(protoPath);
 
     // 解析message
     visitor.visitProto(tree);

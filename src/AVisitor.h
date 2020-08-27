@@ -23,6 +23,7 @@ public:
     void setMessageGot(bool messageGot);
     void setProtoPath(std::string protoPath);
     void setProtoName(std::string);
+    void setProtoBasePath(std::string);
 
 private:
     Json::Value service;
@@ -40,6 +41,8 @@ private:
     bool messageGot = false;
     // 当前解析proto文件的目录
     std::string protoPath;
+    // 解析proto的入口文件夹
+    std::string protoBasePath;
     // 当前解析proto文件名
     std::string protoName;
     // 当前解析完多有message
