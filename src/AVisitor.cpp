@@ -338,6 +338,18 @@ void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
             }
         }
 
+        // 如果没解析到注释，再以多行注释的形式解析单行注释
+        if (comment.empty()) {
+            for (int k = 0; k < comments.size(); ++k)
+            {
+                if (comments[k].isSingleLine() 
+                    && comments[k].getStart() + comments[k].getTotal() == fields[i]->start->getLine()) {
+                    comment = comments[k].getText();
+                    break;
+                }
+            }
+        }
+
         fieldItem["comment"] = comment.data();
 
         // printf("comment:%s\n", comment.data());
