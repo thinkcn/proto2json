@@ -108,6 +108,10 @@ void AVisitor::setProtoBasePath(std::string _protoBasePath)
 {
     protoBasePath = _protoBasePath;
 }
+void AVisitor::setRunPath(std::string _runPath)
+{
+    runPath = _runPath;
+}
 
 antlrcpp::Any AVisitor::visitRpc(Protobuf3Parser::RpcContext *context)
 {
@@ -115,7 +119,7 @@ antlrcpp::Any AVisitor::visitRpc(Protobuf3Parser::RpcContext *context)
      std::string word = token->getText(); 
      // printf("rpc - %s\n", word.data());
     return visitChildren(context);
-}
+} 
 
 antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementContext *context)
 {
@@ -127,17 +131,22 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
     std::string importPath = protoBasePath + "/" + import.data();
     isDebug && printf("import : %s (name=%s)\n", importPath.data(), import.data());
 
+    if (!Helper::isExistFile(importPath.data())) {
+        importPath = runPath + "/" + import.data();
+    }
+
     if (import.rfind("google/protobuf", 0) == 0) {
         // google protobuf value
     } else {
         // 解析相对路径
         std::string pathPre = std::string(dirname(strdup(import.data())));
         if (!Helper::isExistFile(importPath.data()) && !pathPre.empty()) {
+            //printf("importPath:%s\n", importPath.data());
             std::string protoName = std::string(basename(strdup(import.data())));
             std::string pathCopy = protoBasePath;
             eraseRightStr(pathCopy, pathPre);
 
-            importPath = pathCopy + import.data();
+            importPath = pathCopy + "/" + import.data();
         }
 
         // 解析
@@ -146,6 +155,7 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
 
     return visitChildren(context);
 }
+
 
 void AVisitor::parseImportPath(std::string importPath)
 {
@@ -195,6 +205,7 @@ void AVisitor::parseImportPath(std::string importPath)
     AVisitor visitor;
     visitor.setMessageGot(false);
     visitor.setProtoPath(protoPath);
+    visitor.setRunPath(runPath);
     visitor.setProtoName(protoName);
     visitor.setComments(comments);
     visitor.setDebug(isDebug);

@@ -97,6 +97,11 @@ int main(int argc, const char* argv[]) {
         exit(1);
     }
 
+    // 当前执行目录
+    char *path = NULL;
+    path = getcwd(NULL,0);
+    std::string runPath = std::string(path);
+
     // 当前解析proto所在目录
     std::string protoPath = std::string(dirname(strdup(protoFile.data())));
     std::string protoName = std::string(basename(strdup(protoFile.data())));
@@ -150,6 +155,7 @@ int main(int argc, const char* argv[]) {
     AVisitor visitor;
     visitor.setMessageGot(false);
     visitor.setProtoPath(protoPath);
+    visitor.setRunPath(runPath);
     visitor.setComments(comments);
     visitor.setDebug(isDebug);
     visitor.setOutPath(outPuth);
