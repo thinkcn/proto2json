@@ -18,7 +18,7 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 -O3")
 ### Configure Paths according to detected packages
        
 
-if(NOT APPLE)
+if (NOT APPLE)
   if(NOT WIN32)
     if(X11_FOUND)
       SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_XSHM_CCFLAGS} ${CIMG_XRANDR_CCFLAGS}")
@@ -27,7 +27,7 @@ if(NOT APPLE)
   endif(NOT WIN32)
 endif(NOT APPLE)
 
-if(X11_FOUND)
+if (X11_FOUND)
 
   link_directories(${X11_LIB_DIRS})
   include_directories(${X11_INCLUDE_DIR})
@@ -42,19 +42,26 @@ if( WIN32)
   SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  gdi32 )
 endif()
 
-link_libraries(
-  libjsoncpp_static.a
-  )
-include_directories(${PROJECT_SOURCE_DIR}/deps/use/local/include)
+if (APPLE)
+  link_libraries(
+    libjsoncpp.a
+    )
+  include_directories(${PROJECT_SOURCE_DIR}/deps/use/local/include)
+else()
+  link_libraries(
+    libjsoncpp_static.a
+    )
+  include_directories(${PROJECT_SOURCE_DIR}/deps/use/local/include)
+endif()
 
-if(LAPACK_FOUND)
+if (LAPACK_FOUND)
   SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_LAPACK_CCFLAGS}")
   link_directories( ${LAPACK_LIBRARY_DIRS} )
   include_directories( ${LAPACK_INCLUDE_DIRS} )
   SET( SYSTEM_LIBS ${SYSTEM_LIBS} ${LAPACK_LIBRARIES} )
 endif()
 
-if(BLAS_FOUND)
+if (BLAS_FOUND)
 
   SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_BLAS_CCFLAGS}")
   link_directories( ${BLAS_LIBRARY_DIRS} )
