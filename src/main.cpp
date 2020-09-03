@@ -150,7 +150,6 @@ int main(int argc, const char* argv[]) {
     }
 
     // TODO: 解析枚举 为整数
-    // TODO: 注释掉service部分rpc之后报错
 
     AVisitor visitor;
     visitor.setMessageGot(false);

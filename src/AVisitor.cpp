@@ -33,8 +33,7 @@ static inline void trim(std::string &s) {
     rtrim(s);
 }
 
-void eraseLeftStr(std::string & mainStr, const std::string & toErase)
-{
+void eraseLeftStr(std::string & mainStr, const std::string & toErase) {
     size_t pos = std::string::npos;
 
     if (mainStr.find(toErase) == 0) {
@@ -42,8 +41,7 @@ void eraseLeftStr(std::string & mainStr, const std::string & toErase)
     }
 }
 
-void eraseRightStr(std::string & mainStr, const std::string & toErase)
-{
+void eraseRightStr(std::string & mainStr, const std::string & toErase) {
     //TODO : 适配 eraseRightStr("leftleftleft", "left");
 
     size_t pos = mainStr.length() - toErase.length();
@@ -56,12 +54,10 @@ void eraseRightStr(std::string & mainStr, const std::string & toErase)
 /*
  * Erase all Occurrences of given substring from main string.
  */
-void eraseAllSubStr(std::string & mainStr, const std::string & toErase)
-{
+void eraseAllSubStr(std::string & mainStr, const std::string & toErase) {
     size_t pos = std::string::npos;
     // Search for the substring in string in a loop untill nothing is found
-    while ((pos  = mainStr.find(toErase) )!= std::string::npos)
-    {
+    while ((pos  = mainStr.find(toErase) )!= std::string::npos) {
         // If found then erase it from string
         mainStr.erase(pos, toErase.length());
     }
@@ -70,59 +66,47 @@ void eraseAllSubStr(std::string & mainStr, const std::string & toErase)
 /*
  * Erase all Occurrences of all given substrings from main string using Pre C++11 stuff
  */
-void eraseSubStringsPre(std::string & mainStr, const std::vector<std::string> & strList)
-{
+void eraseSubStringsPre(std::string & mainStr, const std::vector<std::string> & strList) {
     // Iterate over the given list of substrings. For each substring call eraseAllSubStr() to
     // remove its all occurrences from main string.
-    for (std::vector<std::string>::const_iterator it = strList.begin(); it != strList.end(); it++)
-    {
+    for (std::vector<std::string>::const_iterator it = strList.begin(); it != strList.end(); it++) {
         eraseAllSubStr(mainStr, *it);
     }
 }
 
-void AVisitor::setDebug(bool _isDebug)
-{
+void AVisitor::setDebug(bool _isDebug) {
     isDebug = _isDebug;
 }
-void AVisitor::setEngine(std::string _engine)
-{
+void AVisitor::setEngine(std::string _engine) {
     engine = _engine;
 }
-void AVisitor::setOutPath(std::string _outPath)
-{
+void AVisitor::setOutPath(std::string _outPath) {
     outPath = _outPath;
 }
-void AVisitor::setMessageGot(bool _messageGot)
-{
+void AVisitor::setMessageGot(bool _messageGot) {
     messageGot = _messageGot;
 }
-void AVisitor::setProtoPath(std::string _protoPath)
-{
+void AVisitor::setProtoPath(std::string _protoPath) {
     protoPath = _protoPath;
 }
-void AVisitor::setProtoName(std::string _protoName)
-{
+void AVisitor::setProtoName(std::string _protoName) {
     protoName = _protoName;
 }
-void AVisitor::setProtoBasePath(std::string _protoBasePath)
-{
+void AVisitor::setProtoBasePath(std::string _protoBasePath) {
     protoBasePath = _protoBasePath;
 }
-void AVisitor::setRunPath(std::string _runPath)
-{
+void AVisitor::setRunPath(std::string _runPath) {
     runPath = _runPath;
 }
 
-antlrcpp::Any AVisitor::visitRpc(Protobuf3Parser::RpcContext *context)
-{
+antlrcpp::Any AVisitor::visitRpc(Protobuf3Parser::RpcContext *context) {
     antlr4::Token *token=  context->rpcName()->getStart();
      std::string word = token->getText(); 
      // printf("rpc - %s\n", word.data());
     return visitChildren(context);
 } 
 
-antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementContext *context)
-{
+antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementContext *context) {
     std::string import = context->StrLit()->getSymbol()->getText();
     eraseLeftStr(import, "\"");
     eraseRightStr(import, "\"");
@@ -157,8 +141,7 @@ antlrcpp::Any AVisitor::visitImportStatement(Protobuf3Parser::ImportStatementCon
 }
 
 
-void AVisitor::parseImportPath(std::string importPath)
-{
+void AVisitor::parseImportPath(std::string importPath) {
     if (!Helper::isExistFile(importPath.data())) { 
         //printf("import:%s is not exists!\n", importPath.data());
         //exit(1);
@@ -225,13 +208,11 @@ void AVisitor::parseImportPath(std::string importPath)
 }
 
 
-antlrcpp::Any AVisitor::visitPackageStatement(Protobuf3Parser::PackageStatementContext *context)
-{
+antlrcpp::Any AVisitor::visitPackageStatement(Protobuf3Parser::PackageStatementContext *context) {
     std::vector<antlr4::tree::TerminalNode *> idens = context->fullIdent()->Ident();
 
     std::vector<std::string> idenArr;
-    for (int m = 0; m < idens.size(); ++m)
-    {
+    for (int m = 0; m < idens.size(); ++m) {
         std::string tmp = idens[m]->getSymbol()->getText();
         idenArr.push_back(tmp);
     }
@@ -244,14 +225,12 @@ antlrcpp::Any AVisitor::visitPackageStatement(Protobuf3Parser::PackageStatementC
     return visitChildren(context);
 }
 
-antlrcpp::Any AVisitor::visitMessage(Protobuf3Parser::MessageContext *context) 
-{
+antlrcpp::Any AVisitor::visitMessage(Protobuf3Parser::MessageContext *context)  {
     parseMsg(context);
     return visitChildren(context);
 }
 
-std::string AVisitor::getFullPackage()
-{
+std::string AVisitor::getFullPackage() {
     if (package.empty() || package.length() == 0) {
         return "";
     }
@@ -262,7 +241,7 @@ std::string AVisitor::getFullPackage()
 std::string AVisitor::getFullPath(std::string fileName)
 {
     std::string path;
-    if (!strcmp(engine.data(), "json")) {
+    if (engine == "json") {
         path = outPath + "/" + fileName;
     } else {
         std::string pathPre = outPath + "/_tmp/";
@@ -280,8 +259,7 @@ std::string AVisitor::getFullPath(std::string fileName)
     return path;
 }
 
-void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
-{
+void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context) {
     antlr4::Token *token = context->messageName()->Ident()->getSymbol();
     std::string messageName = token->getText();
 
@@ -291,13 +269,12 @@ void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
     isDebug && printf("messageName:%s\n", messageName.data());
 
     std::vector<Protobuf3Parser::FieldContext *> fields = context->messageBody()->field();
-    for (int i = 0; i < fields.size(); ++i)
-    {
+    for (int i = 0; i < fields.size(); ++i) {
         Json::Value fieldItem = Json::Value();
         // is repeated
         bool isRepeated = false;
         std::string fieldStart = fields[i]->start->getText().data();
-        if (strcmp(fieldStart.data(), "repeated") == 0) {
+        if (fieldStart == "repeated") {
             isRepeated = true;
         }
 
@@ -325,8 +302,7 @@ void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
         std::string lineComment = "";
         std::string comment = "";
 
-        for (int k = 0; k < comments.size(); ++k)
-        {
+        for (int k = 0; k < comments.size(); ++k) {
             if (!comments[k].isSingleLine() 
                 && comments[k].getStart() + comments[k].getTotal() == fields[i]->start->getLine()) {
                 comment = comments[k].getText();
@@ -340,8 +316,7 @@ void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
 
         // 如果没解析到注释，再以多行注释的形式解析单行注释
         if (comment.empty()) {
-            for (int k = 0; k < comments.size(); ++k)
-            {
+            for (int k = 0; k < comments.size(); ++k) {
                 if (comments[k].isSingleLine() 
                     && comments[k].getStart() + comments[k].getTotal() == fields[i]->start->getLine()) {
                     comment = comments[k].getText();
@@ -379,15 +354,13 @@ void AVisitor::parseMsg(Protobuf3Parser::MessageContext *context)
     }
 }
 
-std::string AVisitor::getMessagePath(std::string messageName)
-{
+std::string AVisitor::getMessagePath(std::string messageName) {
     std::string jsonFile = getFullPackage() + messageName + std::string(".json");
     std::string jsonPath = getFullPath(jsonFile);
     return jsonPath;
 }
 
-antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
-{
+antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context) {
     antlr4::Token *token=  context->serviceName()->getStart();
     std::string serviceName = token->getText();
     std::vector<Protobuf3Parser::RpcContext *> rpcArr = context->rpc();
@@ -416,7 +389,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
     std::string controller = serviceCom.get("controller", serviceName).asString();
 
     // 接口解析
-    if (!strcmp(engine.data(), "api") && messageGot) {
+    if (engine == "api" && messageGot) {
         Json::Value obj = parseComment(serviceComment);
         std::string version = obj.get("version", "last").asString();
         std::string tag = obj.get("tag", serviceName).asString();
@@ -434,8 +407,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
         std::string schemes = obj.get("schemes", "https").asString();
         std::vector<std::string> schemeArr = Helper::split(schemes, "/");
 
-        for (int m = 0; m < schemeArr.size(); ++m)
-        {
+        for (int m = 0; m < schemeArr.size(); ++m) {
             api["schemes"].append(schemeArr[m]);
         }
     }
@@ -475,7 +447,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
                 std::string comment = comments[j].getText();
                 item["comment"] = comment.data();
 
-                if (!strcmp(engine.data(), "api")) {
+                if (engine == "api") {
                     cJson = parseComment(comment);
                     item["commentJson"] = cJson;
 
@@ -486,7 +458,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
             }
         }
 
-        if (!strcmp(engine.data(), "api") && messageGot) {
+        if (engine == "api" && messageGot) {
 
             std::string tag = cJson.get("tag", serviceTag).asString();
             std::string method = cJson.get("method", "post").asString();
@@ -495,7 +467,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
             Json::Value content;
             content["summary"] = cJson.get("title", "").asString();
 
-            if (!strcmp(method.data(), "post")) {
+            if (method == "post") {
                 content["consumes"].append("application/json");
             } else {
                 content["consumes"].append("text/plain");
@@ -543,7 +515,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
     // printf("%s\n", apiJson.data());
 
     if (messageGot) {
-        if (!strcmp(engine.data(), "api")) {
+        if (engine == "api") {
             std::string apiPath = outPath + "/" + "api." + protoName + ".json";
             Helper::write_to_file((const char*)apiJson.data(), apiPath.data());
         }
@@ -557,8 +529,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context)
 }
 
 // 解析响应值
-Json::Value AVisitor::parseResBody(std::string responseName)
-{
+Json::Value AVisitor::parseResBody(std::string responseName) {
     Json::Value body = Json::Value();
     if (responseName.empty()) {
         return body;
@@ -576,7 +547,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
     if (paramJson.length() == 0) {
         for (int i = 0; i < importMsgs.size(); ++i) {
             // printf("--- %s\n", importMsgs[i]["name"].asString().data());
-            if (!strcmp(responseName.data(), importMsgs[i]["name"].asString().data())) {
+            if (responseName == importMsgs[i]["name"].asString()) {
                 paramObj = importMsgs[i];
                 break;
             }
@@ -605,12 +576,12 @@ Json::Value AVisitor::parseResBody(std::string responseName)
 
         std::string type = paramBean.get("type", "string").asString();
         std::string format = paramBean.get("type", "string").asString();
-        if (!strcmp(format.data(), "int32")
-            || !strcmp(format.data(), "int64")
-            || !strcmp(format.data(), "uint32")
-            || !strcmp(format.data(), "fixed32")
-            || !strcmp(format.data(), "sfixed32")
-            || !strcmp(format.data(), "sint32")) {
+        if (format == "int32"
+            || format == "int64" 
+            || format == "uint32"
+            || format == "fixed32" 
+            || format == "sfixed32" 
+            || format == "sint32") {
             type = "integer";
         }
 
@@ -621,8 +592,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
             fieldBean["description"] = pCommentObj.get("desc", "").asString();
      
             body[pName] = fieldBean; 
-        }  
-        else if(!Helper::isBaseType(format)) {
+        } else if(!Helper::isBaseType(format)) {
             
             Json::Value fieldBean = Json::Value();
             fieldBean["type"] = isRepeated ? "array" : "object";
@@ -642,8 +612,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
 
             body[pName] = fieldBean;
             
-        } 
-        else {
+        } else {
             Json::Value fieldBean = Json::Value();
             fieldBean["type"] = type;
             fieldBean["format"] = format;
@@ -656,8 +625,7 @@ Json::Value AVisitor::parseResBody(std::string responseName)
     return body;
 }
 
-Json::Value AVisitor::parseParamBody(std::string parName)
-{
+Json::Value AVisitor::parseParamBody(std::string parName) {
     Json::Value body = Json::Value();
     if (parName.empty()) {
         return body;
@@ -674,7 +642,7 @@ Json::Value AVisitor::parseParamBody(std::string parName)
 
     if (paramJson.length() == 0) {
         for (int i = 0; i < importMsgs.size(); ++i) {
-            if (!strcmp(parName.data(), importMsgs[i]["name"].asString().data())) {
+            if (parName == importMsgs[i]["name"].asString()) {
                 paramObj = importMsgs[i];
                 break;
             }
@@ -712,7 +680,7 @@ Json::Value AVisitor::parseParamBody(std::string parName)
             // 解析数组
             bool isRepeated = paramBean.get("isRepeated", false).asBool();
 
-            if (!strcmp(fieldType.data(), parName.data())) {
+            if (fieldType == parName) {
                 // body["properties"][pName] = Json::Value::null;
 
                 if (!isRepeated) {
@@ -760,8 +728,7 @@ Json::Value AVisitor::parseParamBody(std::string parName)
     return body;
 }
 
-std::string AVisitor::formatComment(std::string tmp)
-{
+std::string AVisitor::formatComment(std::string tmp) {
     std::vector<std::string> lines = Helper::split(tmp, "\n");
     std::vector<std::string> arr;
     for (int n = 0; n < lines.size(); ++n) {
@@ -781,8 +748,7 @@ std::string AVisitor::formatComment(std::string tmp)
 /**
  * 解析注释
  */
-Json::Value AVisitor::parseComment(std::string comment)
-{
+Json::Value AVisitor::parseComment(std::string comment) {
     if (comment.empty()) {
         return Json::Value();
     }
@@ -810,8 +776,7 @@ Json::Value AVisitor::parseComment(std::string comment)
     std::stringstream ss;
     ss << cmens.size();
 
-    for (int m = 0; m < cmens.size(); ++m)
-    {
+    for (int m = 0; m < cmens.size(); ++m) {
         std::string tmp = cmens[m];
         trim(tmp);
         if (tmp.length() == 0) {

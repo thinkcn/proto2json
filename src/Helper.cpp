@@ -13,8 +13,7 @@
 
 using namespace std;
 
-void Helper::write_to_file(const char *json, const char *dstFile)
-{
+void Helper::write_to_file(const char *json, const char *dstFile) {
     FILE *fp;
     fp = fopen(dstFile,"w");
     fprintf(fp, "%s", json);
@@ -31,8 +30,7 @@ int Helper::isDirectory(const char *path) {
 }
 
 // 是否存在文件
-bool Helper::isExistFile(const char *path)
-{
+bool Helper::isExistFile(const char *path) {
     if(access(path, F_OK) != -1 && !Helper::isDirectory(path)) {
         return true;
     } 
@@ -40,18 +38,29 @@ bool Helper::isExistFile(const char *path)
 }
 
 // 是否基础类型
-bool Helper::isBaseType(std::string name)
-{
+bool Helper::isBaseType(std::string name) {
     if (name.empty()) {
         return false;
     }
-    std::vector<std::string> types = {"double", "float", "int32", "int64",
-                                     "uint32", "uint64", "sint32", "sint64",
-                                     "fixed32", "fixed64", "sfixed32", "sfixed64",
-                                     "bool", "string", "bytes"};
+    std::vector<std::string> types = {
+        "double", 
+        "float", 
+        "int32", 
+        "int64",
+        "uint32", 
+        "uint64", 
+        "sint32", 
+        "sint64",
+        "fixed32", 
+        "fixed64", 
+        "sfixed32", 
+        "sfixed64",
+        "bool", 
+        "string", 
+        "bytes"
+    };
     bool isBase = false;
-    for (int i = 0; i < types.size(); ++i)
-    {
+    for (int i = 0; i < types.size(); ++i) {
         if (!strcmp(name.data(), types[i].data())) {
             isBase = true;
             break;
@@ -83,12 +92,10 @@ void Helper::join(const std::vector<std::string>& v, char c, std::string& s) {
 }
 
 // 
-std::vector<std::string> Helper::split(const std::string& str, const std::string& delim)
-{
+std::vector<std::string> Helper::split(const std::string& str, const std::string& delim) {
     std::vector<std::string> tokens;
     size_t prev = 0, pos = 0;
-    do
-    {
+    do {
         pos = str.find(delim, prev);
         if (pos == std::string::npos) pos = str.length();
         std::string token = str.substr(prev, pos-prev);
