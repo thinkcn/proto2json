@@ -387,6 +387,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context) {
     Json::Value serviceCom = parseComment(serviceComment);
     service["commentJson"] = serviceCom;
     std::string controller = serviceCom.get("controller", serviceName).asString();
+    std::string module = serviceCom.get("module", "api").asString();
 
     // 接口解析
     if (engine == "api" && messageGot) {
@@ -452,6 +453,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context) {
                     item["commentJson"] = cJson;
 
                     controller = cJson.get("controller", controller).asString();
+                    module = cJson.get("module", module).asString();
                 }
 
                 break;
@@ -474,7 +476,7 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context) {
             }
             content["tags"].append(tag);
 
-            std::string apiPath = controller + "/" + word;
+            std::string apiPath = module + "/" + controller + "/" + word;
 
             Json::Value pathBean;
             pathBean[apiPath][method] = content;
