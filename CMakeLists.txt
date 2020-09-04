@@ -171,8 +171,13 @@ install(PROGRAMS
     DESTINATION bin)
 
 if (APPLE)
+  add_custom_command(TARGET proto2json POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/bin/package.sh"
+    $<TARGET_FILE_DIR:proto2json>/)
+
   add_custom_target(package
-      COMMAND sh ../bin/package.sh
+      COMMAND sh package.sh
       COMMENT "Now Generating tar.gz file..."
   )
 endif()
