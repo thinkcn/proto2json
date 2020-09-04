@@ -170,10 +170,12 @@ install(PROGRAMS
     build/proto2json
     DESTINATION bin)
 
-add_custom_target(package
-    COMMAND sh ../bin/package.sh
-    COMMENT "Now Generating tar.gz file..."
-)
+if (APPLE)
+  add_custom_target(package
+      COMMAND sh ../bin/package.sh
+      COMMENT "Now Generating tar.gz file..."
+  )
+endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 add_custom_command(TARGET proto2json POST_BUILD
