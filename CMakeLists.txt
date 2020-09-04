@@ -2,21 +2,15 @@ cmake_minimum_required(VERSION 2.8)
 
 project("proto2json")
 
-# CMake commands copied by the CMake file for CImg
-
-# To use PKG_CHECK_MODULES to find some optional packages
 find_package(PkgConfig)
- 
 
 # ### Search Additional Libraries ##########
-  
+
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O3")
 
 # #### End of additional libraries search ##########
 
-
 ### Configure Paths according to detected packages
-       
 
 if (NOT APPLE)
   if(NOT WIN32)
@@ -175,6 +169,11 @@ install(FILES
 install(PROGRAMS 
     build/proto2json
     DESTINATION bin)
+
+add_custom_target(package
+    COMMAND sh ../bin/package.sh
+    COMMENT "Now Generating tar.gz file..."
+)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 add_custom_command(TARGET proto2json POST_BUILD

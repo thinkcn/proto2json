@@ -691,7 +691,7 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
                     arr["$$ref"] = "#/definitions/" + fieldType;
                     arr["items"]["type"] = "object";
                     //arr["items"]["properties"] = objTmp["properties"];
-                    arr["description"] = fieldType;// objTmp["title"];
+                    arr["description"] = fieldType;
                     body["properties"][pName] = arr;
                 }
                 continue;
