@@ -61,7 +61,7 @@ bool Helper::isBaseType(std::string name) {
     };
     bool isBase = false;
     for (int i = 0; i < types.size(); ++i) {
-        if (!strcmp(name.data(), types[i].data())) {
+        if (name == types[i]) {
             isBase = true;
             break;
         }
