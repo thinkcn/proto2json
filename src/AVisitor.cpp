@@ -609,6 +609,7 @@ Json::Value AVisitor::parseResBody(std::string responseName) {
                 fieldBean["items"]["type"] = "object";// type;
                 fieldBean["items"]["properties"] = objTmp["properties"];
             } else {
+                fieldBean["$$ref"] = "#/definitions/"+format; 
                 fieldBean["properties"] = objTmp["properties"];
             }
 
