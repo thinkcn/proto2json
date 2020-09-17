@@ -675,14 +675,15 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
         std::string pComment = paramBean.get("comment", "").asString();
         Json::Value pCommentObj = parseComment(pComment);
 
-
-        std::string fieldType = paramBean.get("type", "string").asString();;
+        bool isRepeated = paramBean.get("isRepeated", false).asBool();
+        std::string fieldType = paramBean.get("type", "string").asString();
         if (Helper::isBaseType(fieldType)) {
-
+            if (isRepeated) {
+                fieldType = "array";
+            }
         } else {
             // 解析数组
-            bool isRepeated = paramBean.get("isRepeated", false).asBool();
-
+            
             if (fieldType == parName) {
                 // body["properties"][pName] = Json::Value::null;
 
@@ -720,6 +721,11 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
 
         Json::Value fieldBean = Json::Value();
         fieldBean["type"] = fieldType;
+
+        if (fieldType == "array") {
+            fieldBean["items"]["type"] = paramBean.get("type", "string").asString();
+        }
+
         fieldBean["format"] = paramBean.get("type", "string").asString();
         fieldBean["description"] = pCommentObj.get("desc", "").asString();
 
