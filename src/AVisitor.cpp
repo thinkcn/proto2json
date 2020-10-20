@@ -493,9 +493,21 @@ antlrcpp::Any AVisitor::visitService(Protobuf3Parser::ServiceContext *context) {
             Json::Value reqBody = Json::Value();
             reqBody["name"] = "root";
             reqBody["in"] = "body";
-            Json::Value body = parseParamBody(parName);
+            Json::Value body = parseParamBody(parName, method);
+
+
             reqBody["schema"] = body;
-            content["parameters"].append(reqBody);
+
+            if (method == "get") {
+                Json::Value val_array = body;
+                int iSize = val_array.size();
+                for (int nIndex = 0; nIndex < iSize; ++ nIndex) { 
+                    Json::Value paramBean = val_array[nIndex];
+                    content["parameters"].append(paramBean);
+                }
+            } else {
+                content["parameters"].append(reqBody);
+            }
 
             // 响应
             Json::Value resBody = parseResBody(responseName);
@@ -600,8 +612,8 @@ Json::Value AVisitor::parseResBody(std::string responseName) {
             fieldBean["type"] = isRepeated ? "array" : "object";
             fieldBean["description"] = pCommentObj.get("desc", format).asString();
         
-            // -
-            Json::Value objTmp = parseParamBody(format);
+            // - 此处 值无关 get or post
+            Json::Value objTmp = parseParamBody(format, "post");
             
             if (isRepeated) {
                 fieldBean["items"]["title"] = format;
@@ -628,11 +640,14 @@ Json::Value AVisitor::parseResBody(std::string responseName) {
     return body;
 }
 
-Json::Value AVisitor::parseParamBody(std::string parName) {
+Json::Value AVisitor::parseParamBody(std::string parName, std::string method) {
     Json::Value body = Json::Value();
     if (parName.empty()) {
         return body;
     }
+
+    Json::Value query = Json::Value();
+
     // message 结构
     Json::Value paramObj;
 
@@ -697,11 +712,19 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
                     //arr["items"]["properties"] = objTmp["properties"];
                     arr["description"] = fieldType;
                     body["properties"][pName] = arr;
+
+                    Json::Value queryItem = Json::Value();
+                    queryItem["name"] = pName;
+                    queryItem["in"] = "query";
+                    queryItem["required"] = false;
+                    queryItem["description"] = "type:array|" + arr.get("description", "").asString();
+                    queryItem["type"] = "array";
+                    query.append(queryItem);
                 }
                 continue;
             }
 
-            Json::Value objTmp = parseParamBody(fieldType);
+            Json::Value objTmp = parseParamBody(fieldType, method);
             if (isRepeated) {
 
                 Json::Value arr = Json::Value(objTmp);
@@ -711,9 +734,26 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
                 arr["description"] = objTmp["title"];
                 arr.removeMember("properties");
                 body["properties"][pName] = arr;
+
+                Json::Value queryItem = Json::Value();
+                queryItem["name"] = pName;
+                queryItem["in"] = "query";
+                queryItem["required"] = false;
+                queryItem["description"] = "type:object|" + arr.get("description", "").asString();
+                queryItem["type"] = arr["type"];
+                queryItem["items"]["type"] = "object";
+                query.append(queryItem);
             } else {
                 objTmp["description"] = pCommentObj.get("desc", "").asString();
                 body["properties"][pName] = objTmp;
+
+                Json::Value queryItem = Json::Value();
+                queryItem["name"] = pName;
+                queryItem["in"] = "query";
+                queryItem["required"] = false;
+                queryItem["description"] = "type:" + fieldType + "|" + objTmp.get("description", "").asString(); 
+                queryItem["type"] = fieldType;
+                query.append(queryItem);
             }
 
             continue;
@@ -733,7 +773,18 @@ Json::Value AVisitor::parseParamBody(std::string parName) {
 
         body["properties"][pName] = fieldBean;
 
-    }  
+        Json::Value queryItem = Json::Value();
+        queryItem["name"] = pName;
+        queryItem["in"] = "query";
+        queryItem["required"] = false;
+        queryItem["description"] = "type:" + fieldType + "|" + fieldBean.get("description", "").asString();
+        queryItem["type"] = fieldType;
+        query.append(queryItem);
+
+    }
+    if (method == "get") {
+        return query;
+    }
     return body;
 }
 

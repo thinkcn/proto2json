@@ -60,7 +60,7 @@ private:
     std::string getFullPath(std::string fileName);
     std::string getMessagePath(std::string messageName);
     std::string formatComment(std::string tmp);
-    Json::Value parseParamBody(std::string parName);
+    Json::Value parseParamBody(std::string parName, std::string method);
     Json::Value parseResBody(std::string responseName);
 
     void parseImportPath(std::string importPath);
