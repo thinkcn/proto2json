@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package app.Gen.EduTeach;
+package app.center;
 
 /**
  * @tag 用户信息
