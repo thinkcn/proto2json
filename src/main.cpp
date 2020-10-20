@@ -150,6 +150,15 @@ int main(int argc, const char* argv[]) {
     }
 
     // TODO: 解析枚举 为整数
+    // TODO: field 使用了proto关键字，导致生成文档出错，
+    // 这样的message对protoc来说，其实是正常的
+    /*
+        message Bean {
+            int32 ser = 1;
+            int32 rpc = 2;
+            string enum = 3;
+        }
+     */
 
     AVisitor visitor;
     visitor.setMessageGot(false);
