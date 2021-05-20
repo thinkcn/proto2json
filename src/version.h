@@ -5,6 +5,6 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define PROTOJSON_VERSION "Beta1.0.4"
+#define PROTOJSON_VERSION "Beta1.0.5"
 
 #endif

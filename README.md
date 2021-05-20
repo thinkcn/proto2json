@@ -11,6 +11,16 @@ cd build
 cmake ..
 make
 make install
+
+# build x86_64
+cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 ..
+make
+cp proto2json proto2json_x84
+
+cmake -DCMAKE_OSX_ARCHITECTURES=arm64 ..
+make
+cp proto2json proto2json_arm
+lipo -create -output proto2json proto2json_x84 proto2json_arm
 ```
 
 ## Usage
